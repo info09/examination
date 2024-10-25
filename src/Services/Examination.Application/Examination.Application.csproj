@@ -6,4 +6,27 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Commands\" />
+    <Folder Include="Mapping\" />
+    <Folder Include="Queries\Categories\GetAllCategories\" />
+    <Folder Include="Queries\Categories\GetCategoriesPaging\" />
+    <Folder Include="Queries\Exams\" />
+    <Folder Include="Queries\ExamResults\" />
+    <Folder Include="Queries\Users\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+    <PackageReference Include="MediatR" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+    <PackageReference Include="MongoDB.Driver" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Examination.Domain\Examination.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
