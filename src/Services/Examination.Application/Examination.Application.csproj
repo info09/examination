@@ -7,13 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Commands\ExamResults\FinishExam\" />
-    <Folder Include="Commands\ExamResults\SubmitQuestion\" />
-    <Folder Include="Commands\ExamResults\StartExam\" />
-    <Folder Include="Commands\ExamResults\SkipExam\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="MediatR" Version="9.0.0" />
