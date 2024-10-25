@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Examination.Infrastructure.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Examination.Shared", "src\BuildingBlocks\Examination.Shared\Examination.Shared.csproj", "{576DBA58-5022-4C1D-8AC0-8805D36C8BED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Examination.API", "src\Services\Examination.API\Examination.API.csproj", "{0281C4CF-5092-4616-8321-ECF73F7A03A6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,10 @@ Global
 		{576DBA58-5022-4C1D-8AC0-8805D36C8BED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{576DBA58-5022-4C1D-8AC0-8805D36C8BED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{576DBA58-5022-4C1D-8AC0-8805D36C8BED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0281C4CF-5092-4616-8321-ECF73F7A03A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0281C4CF-5092-4616-8321-ECF73F7A03A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0281C4CF-5092-4616-8321-ECF73F7A03A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0281C4CF-5092-4616-8321-ECF73F7A03A6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,6 +59,7 @@ Global
 		{E193AB07-7DE8-4165-9CE9-A87A0072F006} = {8D828CAA-A95B-4C62-9129-987D9547A3C0}
 		{6B0C34A6-B583-4DDB-9AF9-E66DDB80DC6D} = {8D828CAA-A95B-4C62-9129-987D9547A3C0}
 		{576DBA58-5022-4C1D-8AC0-8805D36C8BED} = {ED575595-5DBB-48EB-B83A-7E31F05BA916}
+		{0281C4CF-5092-4616-8321-ECF73F7A03A6} = {8D828CAA-A95B-4C62-9129-987D9547A3C0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EC361BFA-6315-45D0-A821-54A027235BD5}

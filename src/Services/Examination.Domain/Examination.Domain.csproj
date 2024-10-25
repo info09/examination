@@ -7,15 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="AggregateModels\ExamAggregate\" />
-    <Folder Include="AggregateModels\ExamResultAggregate\" />
-    <Folder Include="AggregateModels\UserAggregate\" />
-    <Folder Include="AggregateModels\QuestionAggregate\" />
+    <PackageReference Include="MediatR" Version="9.0.0" />
+    <PackageReference Include="MongoDB.Bson" Version="2.12.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR" Version="9.0.0" />
-    <PackageReference Include="MongoDB.Bson" Version="2.12.4" />
+    <ProjectReference Include="..\..\BuildingBlocks\Examination.Shared\Examination.Shared.csproj" />
   </ItemGroup>
 
 </Project>
