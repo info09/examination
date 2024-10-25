@@ -1,0 +1,46 @@
+﻿using Examination.Domain.AggregateModels.ExamAggregate;
+using Examination.Infrastructure.MongoDb.SeedWorks;
+using Examination.Shared.SeedWorks;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
+using MongoDB.Driver.Linq;
+
+namespace Examination.Infrastructure.MongoDb.Repositories
+{
+    public class ExamRepository : BaseRepository<Exam>, IExamRepository
+    {
+        public ExamRepository(IMongoClient mongoClient, IOptions<ExamSettings> settings, string collection) : base(mongoClient, settings, collection)
+        {
+        }
+
+        public async Task<IEnumerable<Exam>> GetAllExamsAsync()
+        {
+            return await Collection.AsQueryable().ToListAsync();
+        }
+
+        public async Task<Exam> GetExamByIdAsync(string id)
+        {
+            var filter = Builders<Exam>.Filter.Eq(s => s.Id, id);
+            return await Collection.Find(filter).FirstOrDefaultAsync();
+        }
+
+        public async Task<PagedList<Exam>> GetExamsPagingAsync(string categoryId, string searchKeyword, int pageIndex, int pageSize)
+        {
+            FilterDefinition<Exam> filter = Builders<Exam>.Filter.Empty;
+            if (!string.IsNullOrEmpty(searchKeyword))
+                filter = Builders<Exam>.Filter.Where(s => s.Name.Contains(searchKeyword));
+
+            if (!string.IsNullOrEmpty(categoryId))
+                filter = Builders<Exam>.Filter.Eq(s => s.CategoryId, categoryId);
+
+            var totalRow = await Collection.Find(filter).CountDocumentsAsync();
+            var items = await Collection.Find(filter)
+                .SortByDescending(x => x.DateCreated)
+                .Skip((pageIndex - 1) * pageSize)
+                .Limit(pageSize)
+                .ToListAsync();
+
+            return new PagedList<Exam>(items, totalRow, pageIndex, pageSize);
+        }
+    }
+}
