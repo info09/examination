@@ -8,9 +8,6 @@
 
   <ItemGroup>
     <Folder Include="Commands\" />
-    <Folder Include="Mapping\" />
-    <Folder Include="Queries\Categories\GetAllCategories\" />
-    <Folder Include="Queries\Categories\GetCategoriesPaging\" />
     <Folder Include="Queries\Exams\" />
     <Folder Include="Queries\ExamResults\" />
     <Folder Include="Queries\Users\" />
