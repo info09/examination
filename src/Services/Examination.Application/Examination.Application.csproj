@@ -8,9 +8,7 @@
 
   <ItemGroup>
     <Folder Include="Commands\" />
-    <Folder Include="Queries\Exams\" />
     <Folder Include="Queries\ExamResults\" />
-    <Folder Include="Queries\Users\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -4,11 +4,9 @@ using Examination.Domain.AggregateModels.ExamAggregate;
 using Examination.Domain.AggregateModels.ExamResultAggregate;
 using Examination.Domain.AggregateModels.QuestionAggregate;
 using Examination.Shared.Categories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Examination.Shared.ExamResults;
+using Examination.Shared.Exams;
+using Examination.Shared.Questions;
 
 namespace Examination.Application.Mapping
 {
@@ -16,13 +14,13 @@ namespace Examination.Application.Mapping
     {
         public MappingProfile()
         {
-            //CreateMap<Exam, ExamDto>().ReverseMap();
+            CreateMap<Exam, ExamDto>().ReverseMap();
             CreateMap<Category, CategoryDto>().ReverseMap();
-            //CreateMap<Question, QuestionDto>().ReverseMap();
-            //CreateMap<Answer, AnswerDto>().ReverseMap();
-            //CreateMap<ExamResult, ExamResultDto>().ReverseMap();
-            //CreateMap<QuestionResult, QuestionResultDto>().ReverseMap();
-            //CreateMap<AnswerResult, AnswerResultDto>().ReverseMap();
+            CreateMap<Question, QuestionDto>().ReverseMap();
+            CreateMap<Answer, AnswerDto>().ReverseMap();
+            CreateMap<ExamResult, ExamResultDto>().ReverseMap();
+            CreateMap<QuestionResult, QuestionResultDto>().ReverseMap();
+            CreateMap<AnswerResult, AnswerResultDto>().ReverseMap();
         }
     }
 }
