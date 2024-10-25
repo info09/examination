@@ -7,7 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Commands\" />
+    <Folder Include="Commands\ExamResults\FinishExam\" />
+    <Folder Include="Commands\ExamResults\SubmitQuestion\" />
+    <Folder Include="Commands\ExamResults\StartExam\" />
+    <Folder Include="Commands\ExamResults\SkipExam\" />
   </ItemGroup>
 
   <ItemGroup>
