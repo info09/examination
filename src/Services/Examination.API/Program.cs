@@ -46,83 +46,30 @@ builder.Services.AddSwaggerGen();
 builder.Services.Configure<ExamSettings>(builder.Configuration);
 builder.Services.RegisterCustomServices();
 
-//
-builder.Services.AddHttpContextAccessor();
-
-
-builder.Services.AddSingleton<IMongoClient>(c =>
-{
-    return new MongoClient(mongodbConnectionString);
-});
-
-builder.Services.AddScoped(c => c.GetService<IMongoClient>()?.StartSession());
-builder.Services.AddAutoMapper(cfg => { cfg.AddProfile(new MappingProfile()); });
-builder.Services.AddMediatR(typeof(StartExamCommandHandler).Assembly);
-builder.Services.AddControllers();
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("CorsPolicy",
-        builder => builder
-            .SetIsOriginAllowed((host) => true)
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            .AllowCredentials());
-});
-
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Examination.API V1", Version = "v1" });
-    c.SwaggerDoc("v2", new OpenApiInfo { Title = "Examination.API V2", Version = "v2" });
-
-});
-
-var identityUrl = builder.Configuration.GetValue<string>("IdentityUrl");
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults
-        .AuthenticationScheme;
-    options.DefaultChallengeScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults
-        .AuthenticationScheme;
-}).AddJwtBearer(options =>
-{
-    options.Authority = identityUrl;
-    options.RequireHttpsMetadata = false;
-    options.Audience = "exam_api";
-    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
-    {
-        ValidateIssuerSigningKey = true,
-        ValidateIssuer = false,
-        ValidateAudience = false
-    };
-    //Fix SSL
-    options.BackchannelHttpHandler = new HttpClientHandler
-    {
-        ServerCertificateCustomValidationCallback = delegate { return true; }
-    };
-});
-
-
-
-builder.Services.Configure<ExamSettings>(builder.Configuration);
-
-//Health check
-builder.Services.AddHealthChecks()
-        .AddCheck("self", () => HealthCheckResult.Healthy())
-        .AddMongoDb(mongodbConnectionString: mongodbConnectionString,
-                    name: "mongo",
-                    failureStatus: HealthStatus.Unhealthy);
-
-builder.Services.AddHealthChecksUI(opt =>
-{
-    opt.SetEvaluationTimeInSeconds(15); //time in seconds between check
-    opt.MaximumHistoryEntriesPerEndpoint(60); //maximum history of checks
-    opt.SetApiMaxActiveRequests(1); //api requests concurrency
-
-    opt.AddHealthCheckEndpoint("Exam API", "/hc"); //map health check api
-})
-        .AddInMemoryStorage();
-
-builder.Services.RegisterCustomServices();
+//var identityUrl = builder.Configuration.GetValue<string>("IdentityUrl");
+//builder.Services.AddAuthentication(options =>
+//{
+//    options.DefaultAuthenticateScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults
+//        .AuthenticationScheme;
+//    options.DefaultChallengeScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults
+//        .AuthenticationScheme;
+//}).AddJwtBearer(options =>
+//{
+//    options.Authority = identityUrl;
+//    options.RequireHttpsMetadata = false;
+//    options.Audience = "exam_api";
+//    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+//    {
+//        ValidateIssuerSigningKey = true,
+//        ValidateIssuer = false,
+//        ValidateAudience = false
+//    };
+//    //Fix SSL
+//    options.BackchannelHttpHandler = new HttpClientHandler
+//    {
+//        ServerCertificateCustomValidationCallback = delegate { return true; }
+//    };
+//});
 
 var app = builder.Build();
 
