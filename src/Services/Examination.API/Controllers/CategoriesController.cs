@@ -6,7 +6,6 @@ using Examination.Application.Queries.Categories.GetCategoriesPaging;
 using Examination.Application.Queries.Categories.GetCategoryById;
 using Examination.Shared.Categories;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -40,7 +39,7 @@ namespace Examination.API.Controllers
         }
 
         [HttpGet("paging")]
-        public async Task<IActionResult> GetCategoriesPagingAsync([FromQuery]GetCategoriesPagingQuery query)
+        public async Task<IActionResult> GetCategoriesPagingAsync([FromQuery] GetCategoriesPagingQuery query)
         {
             var result = await _mediator.Send(query);
             return Ok(result);
