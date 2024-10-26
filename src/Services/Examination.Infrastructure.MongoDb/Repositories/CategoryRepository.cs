@@ -1,6 +1,7 @@
 ﻿using Examination.Domain.AggregateModels.CategoryAggregate;
 using Examination.Infrastructure.MongoDb.SeedWorks;
 using Examination.Shared.SeedWorks;
+using MediatR;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
@@ -9,16 +10,12 @@ namespace Examination.Infrastructure.MongoDb.Repositories
 {
     public class CategoryRepository : BaseRepository<Category>, ICategoryRepository
     {
-        public CategoryRepository(IMongoClient mongoClient, IOptions<ExamSettings> settings, string collection) : base(mongoClient, settings, collection)
+        public CategoryRepository(
+          IMongoClient mongoClient,
+          IOptions<ExamSettings> settings,
+          IMediator mediator)
+      : base(mongoClient, settings, Constants.Collections.Category)
         {
-        }
-
-        public async Task<List<Category>> GetAllCategoriesAsync()
-        {
-            var items = await Collection.AsQueryable()
-                .ToListAsync();
-
-            return items;
         }
 
         public async Task<Category> GetCategoriesByIdAsync(string id)
@@ -46,6 +43,14 @@ namespace Examination.Infrastructure.MongoDb.Repositories
                 .ToListAsync();
 
             return new PagedList<Category>(items, totalRow, pageIndex, pageSize);
+        }
+
+        public async Task<List<Category>> GetAllCategoriesAsync()
+        {
+            var items = await Collection.AsQueryable()
+                .ToListAsync();
+
+            return items;
         }
     }
 }

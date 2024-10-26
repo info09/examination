@@ -1,6 +1,7 @@
 ﻿using Examination.Domain.AggregateModels.ExamResultAggregate;
 using Examination.Infrastructure.MongoDb.SeedWorks;
 using Examination.Shared.SeedWorks;
+using MediatR;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
@@ -8,7 +9,10 @@ namespace Examination.Infrastructure.MongoDb.Repositories
 {
     public class ExamResultRepository : BaseRepository<ExamResult>, IExamResultRepository
     {
-        public ExamResultRepository(IMongoClient mongoClient, IOptions<ExamSettings> settings, string collection) : base(mongoClient, settings, collection)
+        public ExamResultRepository(IMongoClient mongoClient,
+        IOptions<ExamSettings> settings,
+        IMediator mediator)
+        : base(mongoClient, settings, Constants.Collections.ExamResult)
         {
         }
 

@@ -9,19 +9,22 @@ namespace Examination.Infrastructure.MongoDb.Repositories
 {
     public class ExamRepository : BaseRepository<Exam>, IExamRepository
     {
-        public ExamRepository(IMongoClient mongoClient, IOptions<ExamSettings> settings, string collection) : base(mongoClient, settings, collection)
+        public ExamRepository(
+            IMongoClient mongoClient,
+            IOptions<ExamSettings> settings)
+        : base(mongoClient, settings, Constants.Collections.Exam)
         {
-        }
-
-        public async Task<IEnumerable<Exam>> GetAllExamsAsync()
-        {
-            return await Collection.AsQueryable().ToListAsync();
         }
 
         public async Task<Exam> GetExamByIdAsync(string id)
         {
             var filter = Builders<Exam>.Filter.Eq(s => s.Id, id);
             return await Collection.Find(filter).FirstOrDefaultAsync();
+        }
+
+        public async Task<IEnumerable<Exam>> GetAllExamsAsync()
+        {
+            return await Collection.AsQueryable().ToListAsync();
         }
 
         public async Task<PagedList<Exam>> GetExamsPagingAsync(string categoryId, string searchKeyword, int pageIndex, int pageSize)

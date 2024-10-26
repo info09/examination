@@ -9,7 +9,9 @@ namespace Examination.Infrastructure.MongoDb.Repositories
 {
     public class QuestionRepository : BaseRepository<Question>, IQuestionRepository
     {
-        public QuestionRepository(IMongoClient mongoClient, IOptions<ExamSettings> settings, string collection) : base(mongoClient, settings, collection)
+        public QuestionRepository(IMongoClient mongoClient,
+        IOptions<ExamSettings> settings)
+        : base(mongoClient, settings, Constants.Collections.Question)
         {
         }
 
@@ -18,6 +20,7 @@ namespace Examination.Infrastructure.MongoDb.Repositories
             FilterDefinition<Question> filter = Builders<Question>.Filter.Eq(s => s.Id, id);
             return await Collection.Find(filter).FirstOrDefaultAsync();
         }
+
 
         public async Task<PagedList<Question>> GetQuestionsPagingAsync(string categoryId, string searchKeyword, int pageIndex, int pageSize)
         {

@@ -1,5 +1,6 @@
 ﻿using Examination.Domain.AggregateModels.UserAggregate;
 using Examination.Infrastructure.MongoDb.SeedWorks;
+using MediatR;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
@@ -7,7 +8,10 @@ namespace Examination.Infrastructure.MongoDb.Repositories
 {
     public class UserRepository : BaseRepository<User>, IUserRepository
     {
-        public UserRepository(IMongoClient mongoClient, IOptions<ExamSettings> settings, string collection) : base(mongoClient, settings, collection)
+        public UserRepository(
+            IMongoClient mongoClient,
+        IOptions<ExamSettings> settings, IMediator mediator)
+        : base(mongoClient, settings, Constants.Collections.User)
         {
         }
 

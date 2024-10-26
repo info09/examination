@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  #database section
+  mongodb:
+    image: bitnami/mongodb:7.0.11
+
+#network section
+networks:
+  default:
+    name: identity-service-network
+    driver: bridge
+
+#volumes sections
+volumes:
+  mongodb_data:
+    name: mongodb_data
