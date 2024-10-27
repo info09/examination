@@ -27,7 +27,7 @@ namespace Examination.API.Controllers
         {
             var query = new GetCategoryByIdQuery(id);
             var result = await _mediator.Send(query);
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         [HttpGet]
@@ -35,14 +35,14 @@ namespace Examination.API.Controllers
         {
             var query = new GetAllCategoriesQuery();
             var result = await _mediator.Send(query);
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         [HttpGet("paging")]
         public async Task<IActionResult> GetCategoriesPagingAsync([FromQuery] GetCategoriesPagingQuery query)
         {
             var result = await _mediator.Send(query);
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         [HttpPost]
@@ -54,7 +54,7 @@ namespace Examination.API.Controllers
                 UrlPath = request.UrlPath,
             };
             var result = await _mediator.Send(command);
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         [HttpDelete("{id}")]
@@ -67,7 +67,7 @@ namespace Examination.API.Controllers
             var result = await _mediator.Send(new DeleteCategoryCommand(id));
 
             _logger.LogInformation("END: DeleteCategoryAsync");
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
 
@@ -86,7 +86,7 @@ namespace Examination.API.Controllers
             });
 
             _logger.LogInformation("END: UpdateCategoryAsync");
-            return Ok(result);
-        }
+            return StatusCode(result.StatusCode, result);
+        }   
     }
 }

@@ -26,21 +26,21 @@ namespace Examination.API.Controllers
         public async Task<IActionResult> GetAllExams()
         {
             var result = await _mediator.Send(new GetAllExamsQuery());
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         [HttpGet("paging")]
         public async Task<IActionResult> GetAllExamsPaging([FromQuery] GetExamsPagingQuery query)
         {
             var result = await _mediator.Send(query);
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetExamById(string id)
         {
             var result = await _mediator.Send(new GetExamByIdQuery(id));
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         [HttpPost]
@@ -61,7 +61,7 @@ namespace Examination.API.Controllers
                 ShortDesc = request.ShortDesc,
             };
             var result = await _mediator.Send(command);
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         [HttpPut("{id}")]
@@ -83,14 +83,14 @@ namespace Examination.API.Controllers
                 ShortDesc = request.ShortDesc,
             };
             var result = await _mediator.Send(command);
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteExamAsync(string id)
         {
             var result = await _mediator.Send(new DeleteExamCommand(id));
-            return Ok(result);
+            return StatusCode(result.StatusCode, result);
         }
     }
 }
