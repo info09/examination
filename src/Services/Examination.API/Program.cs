@@ -4,9 +4,12 @@ using Examination.Application.Commands.ExamResults.StartExam;
 using Examination.Application.Mapping;
 using Examination.Infrastructure.MongoDb.SeedWorks;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 var user = builder.Configuration.GetValue<string>("DatabaseSettings:User");
@@ -41,12 +44,24 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGenWithAuth(builder.Configuration);
 
 builder.Services.Configure<ExamSettings>(builder.Configuration);
 builder.Services.RegisterCustomServices();
 
 //var identityUrl = builder.Configuration.GetValue<string>("IdentityUrl");
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(o =>
+    {
+        o.RequireHttpsMetadata = false;
+        o.Audience = builder.Configuration["Authentication:Audience"];
+        o.MetadataAddress = builder.Configuration["Authentication:MetadataAddress"];
+        o.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidIssuer = builder.Configuration["Authentication:ValidIssuer"]
+        };
+    });
 //builder.Services.AddAuthentication(options =>
 //{
 //    options.DefaultAuthenticateScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults
@@ -79,6 +94,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.MapGet("user/me", (ClaimsPrincipal claims) =>
+{
+    return claims.Claims.ToDictionary(i => i.Type, i => i.Value);
+}).RequireAuthorization();
 
 app.UseHttpsRedirection();
 
