@@ -12,3 +12,35 @@ services:
       - mongodb_data:/data/db
     ports:
       - "27017:27017"
+
+  keycloak-mysql:
+    container_name: keycloak-mysql
+    restart: always
+    volumes:
+      - mysql_keycloak_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: keycloak
+      MYSQL_USER: keycloak
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+
+  keycloak:
+    container_name: keycloak
+    restart: always
+    command: ["start-dev", "--import-realm"]
+    environment:
+      DB_VENDOR: MYSQL
+      DB_ADDR: mysql
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_PASSWORD: password
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - "8181:8080"
+    volumes:
+      - keycloak_realms:/opt/keycloak/data/import/
+    depends_on:
+      - keycloak-mysql

@@ -5,6 +5,12 @@ services:
   mongodb:
     image: bitnami/mongodb:7.0.11
 
+  keycloak-mysql:
+    image: mysql:8.3.0
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0.2
+
 #network section
 networks:
   default:
@@ -15,3 +21,7 @@ networks:
 volumes:
   mongodb_data:
     name: mongodb_data
+  mysql_keycloak_data:
+    name: mysql_keycloak_data
+  keycloak_realms:
+    name: keycloak_realms
