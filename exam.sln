@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Examination.Shared", "src\B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Examination.API", "src\Services\Examination.API\Examination.API.csproj", "{0281C4CF-5092-4616-8321-ECF73F7A03A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdminApp", "src\WebApps\AdminApp\AdminApp.csproj", "{35114872-1E85-4F64-BF87-A92CFEA81680}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdminApp", "src\WebApps\AdminApp\AdminApp.csproj", "{35114872-1E85-4F64-BF87-A92CFEA81680}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
