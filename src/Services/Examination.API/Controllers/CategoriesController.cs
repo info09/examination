@@ -42,7 +42,7 @@ namespace Examination.API.Controllers
         public async Task<IActionResult> GetCategoriesPagingAsync([FromQuery] GetCategoriesPagingQuery query)
         {
             var result = await _mediator.Send(query);
-            return StatusCode(result.StatusCode, result);
+            return Ok(result);
         }
 
         [HttpPost]

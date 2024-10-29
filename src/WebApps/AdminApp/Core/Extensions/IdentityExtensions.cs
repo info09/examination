@@ -1,7 +1,7 @@
 ﻿using IdentityModel;
 using System.Security.Claims;
 
-namespace AdminApp.Extensions
+namespace AdminApp.Core.Extensions
 {
     public static class IdentityExtensions
     {

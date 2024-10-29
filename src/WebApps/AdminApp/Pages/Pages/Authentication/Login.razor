@@ -1,5 +1,6 @@
 ﻿@page "/"
-@page "/pages/authentication/login"
+@page "/auth/login"
+@using AdminApp.Core
 @using AdminApp.Model
 @using AdminApp.Services.Interfaces
 @layout LoginLayout
@@ -10,7 +11,7 @@
 
     <MudText Typo="Typo.h4" GutterBottom="true">Sign In</MudText>
 
-    <MudText>Don't have an account? <MudLink Href="/pages/authentication/register">Sign Up</MudLink></MudText>
+    <MudText>Don't have an account? <MudLink Href="/auth/register">Sign Up</MudLink></MudText>
     @if (!string.IsNullOrEmpty(errorMsg))
     {
         <MudText Color="@Color.Error">@errorMsg</MudText>
@@ -21,14 +22,18 @@
 
     <div Class="d-flex justify-space-between align-center">
         <MudCheckBox T="bool" Label="Remember me?" Color="Color.Primary" Class="ml-n1 my-3"></MudCheckBox>
-        <MudLink Href="/pages/authentication/forgot-password">Forgot pwd?</MudLink>
+        <MudLink Href="/auth/forgot-password">Forgot pwd?</MudLink>
     </div>
 
 
     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="HandleLogin" Size="Size.Large" FullWidth="true">Sign In</MudButton>
 </EditForm>
+<MudOverlay Visible="loading" DarkBackground="true" Absolute="true">
+    <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
+</MudOverlay>
 
 @code {
+    private bool loading = false;
     LoginRequest model = new LoginRequest();
     string errorMsg = string.Empty;
 
@@ -40,15 +45,17 @@
 
     async Task HandleLogin()
     {
-        var result = await AuthService.Login(model);
+        loading = true;
+        var result = await AuthService.LoginAsync(model);
         if (result.IsError == false)
         {
-            NavigationManager.NavigateTo("/personal/dashboard");
+            NavigationManager.NavigateTo(UrlConstants.Dashboard);
         }
         else
         {
             errorMsg = "Incorrect username or password";
         }
+        loading = false;
     }
 
     void TogglePasswordVisibility()
