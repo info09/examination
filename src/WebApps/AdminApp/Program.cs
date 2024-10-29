@@ -22,7 +22,7 @@ builder.Services.AddScoped<AuthenticationStateProvider, ApiAuthenticationStatePr
 
 builder.Services.AddScoped(sp => new HttpClient
 {
-    BaseAddress = new Uri("https://localhost:5001/")
+    BaseAddress = new Uri(builder.Configuration["BackendApiUrl"])
 });
 
 builder.Services.AddMudServices(config =>

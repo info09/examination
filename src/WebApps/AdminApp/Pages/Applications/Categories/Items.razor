@@ -1,4 +1,5 @@
 ﻿@page "/app/categories"
+@using AdminApp.Components
 @using AdminApp.Services.Interfaces
 @using Examination.Shared.Categories
 @using Examination.Shared.SeedWorks
@@ -12,10 +13,7 @@
         <MudCard Elevation="25" Style="height: 100%">
             <MudCardHeader>
                 <CardHeaderContent>
-                    <MudButton Variant="Variant.Filled" 
-                                EndIcon="@Icons.Material.Filled.Send" 
-                                Link="/app/categories/new" 
-                                Color="Color.Primary">Create</MudButton>
+                    <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Link="/app/categories/new" Color="Color.Primary">Create</MudButton>
                 </CardHeaderContent>
             </MudCardHeader>
             <MudCardContent Class="px-0">

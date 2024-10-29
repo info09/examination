@@ -57,7 +57,7 @@ namespace AdminApp.Services
             {
                 Address = _disco.TokenEndpoint,
                 ClientId = "blazor-app",
-                ClientSecret = "jcSfbofXKyZKkZ6MyqtWh8vkSW6Gv2rn",
+                ClientSecret = "vLeKIsvBr6F7wdaUtys6RLH607pc336J",
                 Scope = "email openid roles profile offline_access",
                 UserName = user,
                 Password = password

@@ -3,7 +3,7 @@
 
 @foreach (var item in _links)
 {
-    <MudButton OnClick="() => OnSelectedPage(item)" Disabled="item.Enabled == false" Variant="item.Active?Variant.Filled:Variant.Text"></MudButton>
+    <MudButton OnClick="() => OnSelectedPage(item)" Disabled="item.Enabled == false" Variant="item.Active?Variant.Filled:Variant.Text">@item.Text</MudButton>
 }
 
 @code {
