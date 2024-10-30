@@ -21,12 +21,16 @@ namespace AdminApp.Services
         
         public async Task<bool> CreateAsync(CreateCategoryRequest request)
         {
+            var token = await _sessionStorage.GetItemAsStringAsync(KeyConstants.AccessToken);
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Trim('"'));
             var result = await _httpClient.PostAsJsonAsync("/api/Categories", request);
             return result.IsSuccessStatusCode;
         }
 
         public async Task<bool> DeleteAsync(string id)
         {
+            var token = await _sessionStorage.GetItemAsStringAsync(KeyConstants.AccessToken);
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Trim('"'));
             var result = await _httpClient.DeleteAsync($"/api/Categories/{id}");
             return result.IsSuccessStatusCode;
         }
@@ -51,15 +55,19 @@ namespace AdminApp.Services
             return result;
         }
 
-        public async Task<CategoryDto> GetCategoryByIdAsync(string id)
+        public async Task<ApiResult<CategoryDto>> GetCategoryByIdAsync(string id)
         {
-            var result = await _httpClient.GetFromJsonAsync<CategoryDto>($"/api/Categories/{id}");
+            var token = await _sessionStorage.GetItemAsStringAsync(KeyConstants.AccessToken);
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Trim('"'));
+            var result = await _httpClient.GetFromJsonAsync<ApiResult<CategoryDto>>($"/api/Categories/{id}");
             return result!;
         }
 
         public async Task<bool> UpdateAsync(UpdateCategoryRequest request)
         {
-            var result = await _httpClient.PatchAsJsonAsync($"/api/Categories", request);
+            var token = await _sessionStorage.GetItemAsStringAsync(KeyConstants.AccessToken);
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Trim('"'));
+            var result = await _httpClient.PutAsJsonAsync($"/api/Categories", request);
             return result.IsSuccessStatusCode;
         }
     }

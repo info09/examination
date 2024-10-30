@@ -26,7 +26,7 @@ namespace Examination.Application.Commands.Categories.DeleteCategory
         public async Task<ApiResult<bool>> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
         {
             var itemToDelete = await _categoryRepository.GetCategoriesByIdAsync(request.Id);
-            if (itemToDelete != null)
+            if (itemToDelete == null)
             {
                 _logger.LogError("Category not found");
                 return new ApiErrorResult<bool>(400, "Category not found");

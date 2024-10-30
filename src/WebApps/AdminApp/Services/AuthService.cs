@@ -16,6 +16,7 @@ namespace AdminApp.Services
         private readonly IConfiguration _configuration;
         private readonly ILogger<AuthService> _logger;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
+        private DateTime _accessTokenExpiration;
 
         public AuthService(
             HttpClient httpClient,
@@ -33,19 +34,10 @@ namespace AdminApp.Services
 
         public async Task<TokenResponse> LoginAsync(LoginRequest loginRequest)
         {
-            _disco = await HttpClientDiscoveryExtensions.GetDiscoveryDocumentAsync(
-               _httpClient,
-               "http://localhost:8181/realms/exam/.well-known/openid-configuration");
-            if (_disco.IsError)
+            var token = new TokenResponse();
+            if (DateTime.UtcNow >= _accessTokenExpiration)
             {
-                throw new ApplicationException($"Status code: {_disco.IsError}, Error: {_disco.Error}");
-            }
-            var token = await RequestTokenAsync(loginRequest.UserName, loginRequest.Password);
-            if (token.IsError == false)
-            {
-                await _sessionStorage.SetItemAsync(KeyConstants.AccessToken, token.AccessToken);
-                await _sessionStorage.SetItemAsync(KeyConstants.RefreshToken, token.RefreshToken);
-                ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(loginRequest.UserName);
+                token = await RefreshAccessTokenAsync(loginRequest);
             }
             return token;
         }
@@ -57,7 +49,8 @@ namespace AdminApp.Services
             {
                 Address = _disco.TokenEndpoint,
                 ClientId = "blazor-app",
-                ClientSecret = "vLeKIsvBr6F7wdaUtys6RLH607pc336J",
+                //ClientSecret = "vLeKIsvBr6F7wdaUtys6RLH607pc336J",
+                ClientSecret = "jcSfbofXKyZKkZ6MyqtWh8vkSW6Gv2rn",
                 Scope = "email openid roles profile offline_access",
                 UserName = user,
                 Password = password
@@ -70,6 +63,26 @@ namespace AdminApp.Services
             await _sessionStorage.RemoveItemAsync(KeyConstants.RefreshToken);
             ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsLoggedOut();
             _httpClient.DefaultRequestHeaders.Authorization = null;
+        }
+
+        public async Task<TokenResponse> RefreshAccessTokenAsync(LoginRequest loginRequest)
+        {
+            _disco = await HttpClientDiscoveryExtensions.GetDiscoveryDocumentAsync(
+               _httpClient,
+               "http://localhost:8181/realms/exam/.well-known/openid-configuration");
+            if (_disco.IsError)
+            {
+                throw new ApplicationException($"Status code: {_disco.IsError}, Error: {_disco.Error}");
+            }
+            var token = await RequestTokenAsync(loginRequest.UserName, loginRequest.Password);
+            if (token.IsError == false)
+            {
+                await _sessionStorage.SetItemAsync(KeyConstants.AccessToken, token.AccessToken);
+                await _sessionStorage.SetItemAsync(KeyConstants.RefreshToken, token.RefreshToken);
+                _accessTokenExpiration = DateTime.UtcNow.AddSeconds(token.ExpiresIn);
+                ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(loginRequest.UserName);
+            }
+            return token;
         }
     }
 }

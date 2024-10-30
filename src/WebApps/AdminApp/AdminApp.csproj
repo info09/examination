@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Pages\Applications\Categories\NewItem.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Blazored.SessionStorage" Version="2.4.0" />
     <PackageReference Include="IdentityModel" Version="7.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="6.0.10" />
@@ -36,18 +32,6 @@
     <Content Update="wwwroot\appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Pages\Applications\Categories\NewItem.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Pages\Applications\Categories\NewItem.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Pages\Applications\Categories\NewItem.razor" />
   </ItemGroup>
 
 </Project>

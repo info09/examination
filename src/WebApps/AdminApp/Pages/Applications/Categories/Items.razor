@@ -5,6 +5,7 @@
 @using Examination.Shared.SeedWorks
 @inject ICategoryService CategoryService
 @inject IDialogService DialogService
+@inject ISnackbar Snackbar
 @inject NavigationManager NavigationManager
 
 <MudText Typo="Typo.h5" Color="Color.Primary" Class="mb-4">Category</MudText>
@@ -99,7 +100,26 @@
         await GetTasks();
     }
 
-    public async Task OnDeleteTask(string deleteId){}
+    public async Task OnDeleteTask(string deleteId)
+    {
+        DeletedId = deleteId;
+        var parameters = new DialogParameters();
+        parameters.Add("ContentText", "Do you really want to delete these records? This process cannot be undone.");
+        parameters.Add("ButtonText", "Delete");
+        parameters.Add("Color", Color.Error);
+
+        var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+
+        var dialog = DialogService.Show<ConfirmationDialog>("Delete", parameters, options);
+        var result = await dialog.Result;
+        if (!result.Cancelled)
+        {
+            await CategoryService.DeleteAsync(DeletedId);
+            Snackbar.Add("Delete success", Severity.Success);
+            await GetTasks();
+        }
+
+    }
 
     private void NavigateToEdit(string id)
     {
