@@ -22,6 +22,7 @@
                     <MudTextField Label="Url Path" Required="true" RequiredError="UrlPath is required" HelperText="Examle: Csharp-programing" @bind-Value="model.UrlPath" For="@(() => model.UrlPath)" />
                 </MudCardContent>
                 <MudCardActions>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" Link="/app/categories" >Back</MudButton>
                     <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Save</MudButton>
                 </MudCardActions>
             </MudCard>

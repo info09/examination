@@ -70,5 +70,10 @@ namespace AdminApp.Services
             var result = await _httpClient.PutAsJsonAsync($"/api/Categories", request);
             return result.IsSuccessStatusCode;
         }
+
+        public Task<ApiResult<List<CategoryDto>>> GetAllCategories()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

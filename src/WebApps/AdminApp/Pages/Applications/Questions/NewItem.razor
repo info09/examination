@@ -1,0 +1,108 @@
+﻿@page "/app/questions/new"
+@using AdminApp.Core
+@using AdminApp.Services.Interfaces
+@using Examination.Shared.Categories
+@using Examination.Shared.Enums
+@using Examination.Shared.Questions
+@inject IQuestionService QuestionService
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
+
+<MudText Typo="Typo.h5" Color="Color.Primary" Class="mb-4">Create Question</MudText>
+<EditForm Model="model" OnValidSubmit="OnValidSubmit">
+    <MudPaper>
+        <MudGrid Style="margin:0">
+            <MudItem xs="6" md="6" sm="12">
+                <DataAnnotationsValidator />
+                <MudTextField Label="Content" Required="true" RequiredError="Content is required" @bind-Value="model.Content" For="(() => model.Content)" />
+
+                <MudText>Level</MudText>
+                <MudRadioGroup @bind-SelectedOption="model.Level" Required="true" RequiredError="Level is required">
+                    <MudRadio Option="Level.Easy" Color="Color.Primary">Easy</MudRadio>
+                    <MudRadio Option="Level.Medium" Color="Color.Warning">Medium</MudRadio>
+                    <MudRadio Option="Level.Difficult" Color="Color.Error">Difficult</MudRadio>
+                </MudRadioGroup>
+
+                <MudText>Type</MudText>
+                <MudRadioGroup @bind-SelectedOption="model.QuestionType" Required="true" RequiredError="Question type is required">
+                    <MudRadio Option="QuestionType.SingleSelection" Color="Color.Primary">Single Choice</MudRadio>
+                    <MudRadio Option="QuestionType.MultipleSelection" Color="Color.Secondary">Multiple Choice</MudRadio>
+                </MudRadioGroup>
+
+                <MudSelect Label="Category" @bind-Value="model.CategoryId" Required="true" RequiredError="Category is required"
+                           OffsetY="true" AdornmentIcon="@Icons.Material.Filled.Category" AdornmentColor="Color.Primary">
+                    @foreach (var item in categories)
+                    {
+                        <MudSelectItem Value="item.Id">@item.Name</MudSelectItem>
+                    }
+                </MudSelect>
+
+                <MudTextField Label="Explain answer" Required="true" RequiredError="Explain is required"
+                              @bind-Value="model.Explain" For="@(() => model.Explain)" />
+            </MudItem>
+            <MudItem xs="6" md="6" sm="12">
+                <MudText>Answers</MudText>
+                <MudTable Items="@answers" Hover="true" Breakpoint="Breakpoint.Sm"
+                          Loading="@loading" Context="item" LoadingProgressColor="Color.Info">
+                    <HeaderContent>
+                        <MudTh>Content</MudTh>
+                        <MudTh>Correct</MudTh>
+                        <MudTh></MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Content">@item.Content</MudTd>
+                        <MudTd DataLabel="Correct">@(item.IsCorrect ? "Correct" : "")</MudTd>
+                        <MudTd>
+                            <MudIconButton Icon="@Icons.Material.Filled.Update" OnClick="async ()=>await OnEdit(item.ClientId)" Variant="Variant.Filled" Color="Color.Warning" Size="Size.Large" Class="ma-2" />
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="async ()=>await OnDelete(item.ClientId)" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large" Class="ma-2" />
+                        </MudTd>
+                    </RowTemplate>
+                    <FooterContent>
+                        <MudButton ButtonType="ButtonType.Button" OnClick="AddAnswer" Variant="Variant.Filled" Color="Color.Success">Create</MudButton>
+                    </FooterContent>
+                </MudTable>
+            </MudItem>
+            <MudItem sm="12">
+                <MudToolBar>
+                    <MudSpacer />
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled"
+                               Color="Color.Primary" Class="ml-auto">Save</MudButton>
+                </MudToolBar>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+</EditForm>
+<MudOverlay Visible="loading" DarkBackground="true" Absolute="true">
+    <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
+</MudOverlay>
+
+@code {
+    private bool success;
+    private bool loading = false;
+    CreateQuestionRequest model = new CreateQuestionRequest();
+    List<CategoryDto> categories = new List<CategoryDto>();
+    List<AnswerDto> answers = new List<AnswerDto>();
+
+    private async Task OnValidSubmit()
+    {
+        loading = true;
+        success = await QuestionService.CreateAsync(model);
+        if (success)
+        {
+            Snackbar.Add("Create success", Severity.Success);
+            NavigationManager.NavigateTo(UrlConstants.Questions);
+        }
+        else
+        {
+            Snackbar.Add("Create not success", Severity.Error);
+        }
+        loading = false;
+        StateHasChanged();
+    }
+
+    private async Task AddAnswer(){}
+
+    private async Task OnEdit(Guid id) { }
+
+    private async Task OnDelete(Guid id){}
+}
