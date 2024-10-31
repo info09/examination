@@ -1,30 +1,29 @@
-﻿@page "/app/questions/new"
-@using AdminApp.Core
-@using AdminApp.Services.Interfaces
+﻿@page "/app/questions/details/{Id}"
 @using Examination.Shared.Categories
 @using Examination.Shared.Enums
 @using Examination.Shared.Questions
 @inject IQuestionService QuestionService
 @inject ICategoryService CategoryService
 @inject ISnackbar Snackbar
-@inject NavigationManager NavigationManager
 @inject IDialogService DialogService
+@inject NavigationManager NavigationManager
 
-<MudText Typo="Typo.h5" Color="Color.Primary" Class="mb-4">Create Question</MudText>
+<MudText Typo="Typo.h5" Color="Color.Primary" Class="mb-4">@model.Content</MudText>
+
 <EditForm Model="model" OnValidSubmit="OnValidSubmit">
     <MudPaper>
         <MudGrid Style="margin:0">
             <MudItem xs="6" md="6" sm="12">
                 <DataAnnotationsValidator />
-                <MudTextField Label="Content" Required="true" RequiredError="Content is required" @bind-Value="model.Content" For="(() => model.Content)" />
-
+                <MudTextField Label="Content" Required="true" RequiredError="Content is required"
+                              @bind-Value="model.Content" For="@(() => model.Content)" />
                 <MudText>Level</MudText>
                 <MudRadioGroup @bind-SelectedOption="model.Level" Required="true" RequiredError="Level is required">
                     <MudRadio Option="Level.Easy" Color="Color.Primary">Easy</MudRadio>
                     <MudRadio Option="Level.Medium" Color="Color.Warning">Medium</MudRadio>
                     <MudRadio Option="Level.Difficult" Color="Color.Error">Difficult</MudRadio>
-                </MudRadioGroup>
 
+                </MudRadioGroup>
                 <MudText>Type</MudText>
                 <MudRadioGroup @bind-SelectedOption="model.QuestionType" Required="true" RequiredError="Question type is required">
                     <MudRadio Option="QuestionType.SingleSelection" Color="Color.Primary">Single Choice</MudRadio>
@@ -44,7 +43,7 @@
             </MudItem>
             <MudItem xs="6" md="6" sm="12">
                 <MudText>Answers</MudText>
-                <MudTable Items="@answers" Hover="true" Breakpoint="Breakpoint.Sm"
+                <MudTable Items="@model.Answers" Hover="true" Breakpoint="Breakpoint.Sm"
                           Loading="@loading" Context="item" LoadingProgressColor="Color.Info">
                     <HeaderContent>
                         <MudTh>Content</MudTh>
@@ -67,73 +66,110 @@
             <MudItem sm="12">
                 <MudToolBar>
                     <MudSpacer />
-                    <MudButton ButtonType="ButtonType.Button" Variant="Variant.Filled" Color="Color.Success" Link="/app/questions">Back</MudButton>
-                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Save</MudButton>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled"
+                               Color="Color.Primary" Class="ml-auto">Lưu Lại</MudButton>
                 </MudToolBar>
             </MudItem>
         </MudGrid>
     </MudPaper>
 </EditForm>
+
 <MudOverlay Visible="loading" DarkBackground="true" Absolute="true">
     <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
 </MudOverlay>
 
 @code {
-    private bool success;
-    private bool loading = false;
-    CreateQuestionRequest model = new CreateQuestionRequest();
+    bool success;
+    bool loading = false;
+    [Parameter]
+    public string Id { set; get; }
+    UpdateQuestionRequest model = new UpdateQuestionRequest();
     List<CategoryDto> categories = new List<CategoryDto>();
-    List<AnswerDto> answers = new List<AnswerDto>();
-
-    protected override async Task OnInitializedAsync()
-    {
-        var result = await CategoryService.GetAllCategories();
-        if (result.IsSuccessed)
-        {
-            categories = result.ResultObj;
-        }
-    }
-
-    private async Task AddAnswer()
-    {
-        var parameter = new DialogParameters
-            {
-                ["Model"] = new AnswerDto(),
-                ["Mode"] = DialogMode.Add
-            };
-
-        var dialog = DialogService.Show<AnswerDialog>("Create Answer", parameter);
-        var result = await dialog.Result;
-        if (!result.Cancelled)
-        {
-            var answer = (AnswerDto)result.Data;
-            answer.Id = "";
-            answers.Add(answer);
-            model.Answers = answers;
-        }
-    }
 
     private async Task OnValidSubmit()
     {
+        if (model.Answers.Count(i => i.IsCorrect) > 1 && model.QuestionType == QuestionType.SingleSelection)
+        {
+            Snackbar.Add("Only one correct answer", Severity.Error);
+        }
         loading = true;
-        success = await QuestionService.CreateAsync(model);
+        success = await QuestionService.UpdateAsync(model);
         if (success)
         {
-            Snackbar.Add("Create success", Severity.Success);
+            Snackbar.Add("Update success", Severity.Success);
             NavigationManager.NavigateTo(UrlConstants.Questions);
         }
         else
         {
-            Snackbar.Add("Create not success", Severity.Error);
+            Snackbar.Add("Update error", Severity.Error);
         }
         loading = false;
         StateHasChanged();
     }
 
-
-    private async Task OnEdit(Guid id)
+    protected override async Task OnInitializedAsync()
     {
-        var answer = answers.SingleOrDefault(i => i.ClientId == id);
+        await LoadItemDetails();
+    }
+
+    private async Task LoadItemDetails()
+    {
+        loading = true;
+        var categoryResult = await CategoryService.GetAllCategories();
+        var questionResult = await QuestionService.GetQuestionById(Id);
+
+        if (categoryResult.IsSuccessed && questionResult.IsSuccessed)
+        {
+            categories = categoryResult.ResultObj;
+            var question = questionResult.ResultObj;
+            model.Id = question.Id;
+            model.Content = question.Content;
+            model.Level = question.Level;
+            model.QuestionType = question.QuestionType;
+            model.Explain = question.Explain;
+            model.CategoryId = question.CategoryId;
+            model.Answers = question.Answers.ToList();
+        }
+        loading = false;
+    }
+
+    private async Task AddAnswer()
+    {
+        var parameters = new DialogParameters
+            {
+                ["Model"] = new AnswerDto(),
+                ["Mode"] = DialogMode.Add
+            };
+
+        var dialog = DialogService.Show<AnswerDialog>("Add Answer", parameters);
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            model.Answers.Add(result.Data as AnswerDto);
+        }
+    }
+
+    public async Task OnDelete(Guid clientId)
+    {
+        var parameter = new DialogParameters();
+        parameter.Add("ContentText", "Do you really want to delete these records? This process cannot be undone.");
+        parameter.Add("ButtonText", "Delete");
+        parameter.Add("Color", Color.Error);
+
+        var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+
+        var dialog = DialogService.Show<ConfirmationDialog>("Delete", parameter, options);
+        var result = await dialog.Result;
+        if (!result.Cancelled)
+        {
+            model.Answers.Where(x => x.ClientId != clientId).ToList();
+        }
+    }
+    private async Task OnEdit(Guid clientId)
+    {
+
+        var answer = model.Answers.SingleOrDefault(i => i.ClientId == clientId);
         if (answer == null)
         {
             Snackbar.Add("Cannot edit this answer");
@@ -154,23 +190,5 @@
             answer.Content = updateAnswer.Content;
             answer.IsCorrect = updateAnswer.IsCorrect;
         }
-    }
-
-    private async Task OnDelete(Guid id)
-    {
-        var parameter = new DialogParameters();
-        parameter.Add("ContentText", "Do you really want to delete these records? This process cannot be undone.");
-        parameter.Add("ButtonText", "Delete");
-        parameter.Add("Color", Color.Error);
-
-        var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
-
-        var dialog = DialogService.Show<ConfirmationDialog>("Delete", parameter, options);
-        var result = await dialog.Result;
-        if (!result.Cancelled)
-        {
-            answers = answers.Where(x => x.ClientId != id).ToList();
-        }
-
     }
 }
