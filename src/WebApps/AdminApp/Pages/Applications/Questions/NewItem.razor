@@ -5,8 +5,10 @@
 @using Examination.Shared.Enums
 @using Examination.Shared.Questions
 @inject IQuestionService QuestionService
+@inject ICategoryService CategoryService
 @inject ISnackbar Snackbar
 @inject NavigationManager NavigationManager
+@inject IDialogService DialogService
 
 <MudText Typo="Typo.h5" Color="Color.Primary" Class="mb-4">Create Question</MudText>
 <EditForm Model="model" OnValidSubmit="OnValidSubmit">
@@ -83,6 +85,34 @@
     List<CategoryDto> categories = new List<CategoryDto>();
     List<AnswerDto> answers = new List<AnswerDto>();
 
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await CategoryService.GetAllCategories();
+        if (result.IsSuccessed)
+        {
+            categories = result.ResultObj;
+        }
+    }
+
+    private async Task AddAnswer()
+    {
+        var parameter = new DialogParameters
+            {
+                ["Model"] = new AnswerDto(),
+                ["Mode"] = DialogMode.Add
+            };
+
+        var dialog = DialogService.Show<AnswerDialog>("Create Answer", parameter);
+        var result = await dialog.Result;
+        if (!result.Cancelled)
+        {
+            var answer = (AnswerDto)result.Data;
+            answer.Id = "";
+            answers.Add(answer);
+            model.Answers = answers;
+        }
+    }
+
     private async Task OnValidSubmit()
     {
         loading = true;
@@ -100,9 +130,47 @@
         StateHasChanged();
     }
 
-    private async Task AddAnswer(){}
 
-    private async Task OnEdit(Guid id) { }
+    private async Task OnEdit(Guid id)
+    {
+        var answer = answers.SingleOrDefault(i => i.ClientId == id);
+        if (answer == null)
+        {
+            Snackbar.Add("Cannot edit this answer");
+            return;
+        }
 
-    private async Task OnDelete(Guid id){}
+        var parameter = new DialogParameters
+            {
+                ["Model"] = answer,
+                ["Mode"] = DialogMode.Edit
+            };
+        var dialog = DialogService.Show<AnswerDialog>("Edit Answer", parameter);
+        var result = await dialog.Result;
+        if (!result.Cancelled)
+        {
+            var updateAnswer = (AnswerDto)result.Data;
+            answer.Id = updateAnswer.Id;
+            answer.Content = updateAnswer.Content;
+            answer.IsCorrect = updateAnswer.IsCorrect;
+        }
+    }
+
+    private async Task OnDelete(Guid id)
+    {
+        var parameter = new DialogParameters();
+        parameter.Add("ContentText", "Do you really want to delete these records? This process cannot be undone.");
+        parameter.Add("ButtonText", "Delete");
+        parameter.Add("Color", Color.Error);
+
+        var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+
+        var dialog = DialogService.Show<ConfirmationDialog>("Delete", parameter, options);
+        var result = await dialog.Result;
+        if (!result.Cancelled)
+        {
+            answers = answers.Where(x => x.ClientId != id).ToList();
+        }
+
+    }
 }

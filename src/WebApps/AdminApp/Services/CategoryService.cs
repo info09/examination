@@ -71,9 +71,10 @@ namespace AdminApp.Services
             return result.IsSuccessStatusCode;
         }
 
-        public Task<ApiResult<List<CategoryDto>>> GetAllCategories()
+        public async Task<ApiResult<List<CategoryDto>>> GetAllCategories()
         {
-            throw new NotImplementedException();
+            var result = await _httpClient.GetFromJsonAsync<ApiResult<List<CategoryDto>>>("/api/Categories");
+            return result;
         }
     }
 }

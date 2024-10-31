@@ -6,6 +6,7 @@
 @using Examination.Shared.SeedWorks
 @inject IQuestionService QuestionService
 @inject IDialogService DialogService
+@inject ISnackbar Snackbar
 @inject NavigationManager NavigationManager
 
 <MudText Typo="Typo.h5" Color="Color.Primary" Class="mb-4">Question</MudText>
@@ -35,7 +36,7 @@
                                 <MudTd DataLabel="Name">@context.Level</MudTd>
                                 <MudTd DataLabel="Name">@(context.QuestionType == QuestionType.SingleSelection?"Single":"Multiples") </MudTd>
                                 <MudTd DataLabel="Name">@context.CategoryName</MudTd>
-                                <MudTd DataLabel="Name">@context.DateCreated.ToString("dd/MM/yyyy hh:mm")</MudTd>
+                                <MudTd DataLabel="Name">@context.DateCreated.ToLocalTime().ToString("dd/MM/yyyy hh:mm")</MudTd>
                                 <MudTd>
                                     <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="()=>NavigateToEdit(context.Id)" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Class="ma-2" />
                                     <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="async ()=>await OnDeleteTask(context.Id)" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large" Class="ma-2" />
@@ -80,9 +81,31 @@
         await GetQuestion();
     }
 
-    private async Task NavigateToEdit(string id){}
+    private async Task NavigateToEdit(string id)
+    {
 
-    private async Task OnDeleteTask(string deletedId){}
+
+    }
+
+    private async Task OnDeleteTask(string deletedId)
+    {
+        
+        DeletedId = deletedId;
+        var parameters = new DialogParameters();
+        parameters.Add("ContentText", "Do you really want to delete these records? This process cannot be undone.");
+        parameters.Add("ButtonText", "Delete");
+        parameters.Add("Color", Color.Error);
+
+        var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+
+        var dialog = DialogService.Show<ConfirmationDialog>("Delete", parameters, options);
+        var result = await dialog.Result;
+        if (!result.Cancelled)
+        {
+            await QuestionService.DeleteAsync(DeletedId);
+            Snackbar.Add("Delete success", Severity.Success);
+            await GetQuestion();
+        }}
 
     private async Task SelectedPage(int page)
     {
