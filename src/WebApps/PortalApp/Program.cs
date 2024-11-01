@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using PortalApp;
 using PortalApp.Core;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,29 +19,37 @@ builder.Services.AddAuthentication(options =>
     .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddOpenIdConnect(options =>
     {
-        options.Authority = "http://localhost:8181/realms/exam";
-        options.ClientId = "web-app";
-        options.ClientSecret = "oyVn2O01PppwKsuirfXforq4ZWOMFN91";
+        options.Authority = builder.Configuration["KeyCloak:KeyCloakUrl"];
+        options.ClientId = builder.Configuration["KeyCloak:ClientId"];
+        options.ClientSecret = builder.Configuration["KeyCloak:ClientSecret"];
 
         //"email openid roles profile offline_access
         options.Scope.Add("openid");
         options.Scope.Add("profile");
         options.Scope.Add("email");
-        options.Scope.Add("roles");
-        options.Scope.Add("offline_access");
+
+        options.RequireHttpsMetadata = false;
+        options.SaveTokens = true;
+        options.ResponseType = "code";
 
         // Xử lý sự kiện đăng nhập
         options.Events = new OpenIdConnectEvents
         {
             OnTokenValidated = context =>
             {
+                var accessToken = context.TokenEndpointResponse.AccessToken;
+                var refreshToken = context.TokenEndpointResponse.RefreshToken;
                 // Bạn có thể xử lý thông tin người dùng tại đây sau khi đăng nhập thành công
                 return Task.CompletedTask;
             }
         };
-        options.RequireHttpsMetadata = false;
-        options.SaveTokens = true;
+        
     });
+builder.Services.AddHttpClient("BackendApi", options =>
+{
+    options.BaseAddress = new Uri(builder.Configuration["BackendApiUrl"]);
+});
+builder.Services.RegisterCustomServices();
 
 var app = builder.Build();
 
