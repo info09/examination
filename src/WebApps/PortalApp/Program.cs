@@ -22,9 +22,12 @@ builder.Services.AddAuthentication(options =>
         options.ClientId = "web-app";
         options.ClientSecret = "oyVn2O01PppwKsuirfXforq4ZWOMFN91";
 
+        //"email openid roles profile offline_access
         options.Scope.Add("openid");
         options.Scope.Add("profile");
         options.Scope.Add("email");
+        options.Scope.Add("roles");
+        options.Scope.Add("offline_access");
 
         // Xử lý sự kiện đăng nhập
         options.Events = new OpenIdConnectEvents

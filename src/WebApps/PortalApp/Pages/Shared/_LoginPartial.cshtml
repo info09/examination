@@ -1,4 +1,5 @@
-﻿﻿<div class="generic-list-item d-flex flex-wrap align-items-center fs-14 border-left border-left-gray pl-3 ml-3">
+﻿@using PortalApp.Extensions
+﻿<div class="generic-list-item d-flex flex-wrap align-items-center fs-14 border-left border-left-gray pl-3 ml-3">
     <div class="nav-right-button d-flex align-items-center">
         <div class="user-action-wrap d-flex align-items-center">
             <div class="shop-cart course-cart pr-3 mr-3 border-right border-right-gray">
@@ -188,7 +189,7 @@
                                     <img class="rounded-full img-fluid" src="images/small-avatar-1.jpg" alt="Avatar image">
                                 </a>
                                 <div class="ml-2">
-                                    <h4><a href="teacher-detail.html" class="text-black">Alex Smith</a></h4>
+                                    <h4><a href="teacher-detail.html" class="text-black">@User.GetFullName()</a></h4>
                                     <span class="d-block fs-14 lh-20">alexsmith@example.com</span>
                                 </div>
                             </li>
