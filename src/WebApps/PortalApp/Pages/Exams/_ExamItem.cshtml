@@ -11,7 +11,15 @@
             </div>
         </div><!-- end card-image -->
         <div class="card-body">
-            <h6 class="ribbon ribbon-blue-bg fs-14 mb-3">@Model.Level</h6>
+            @if(Model.Level == Examination.Shared.Enums.Level.Easy){
+                <h6 class="ribbon ribbon-blue-bg fs-14 mb-3">@Model.Level</h6>
+            }else if (Model.Level == Examination.Shared.Enums.Level.Medium)
+            {
+                <h6 class="ribbon ribbon-red-bg fs-14 mb-3">@Model.Level</h6>
+            }else{
+                <h6 class="ribbon ribbon-yellow-bg fs-14 mb-3">@Model.Level</h6>
+            }
+            
             <h5 class="card-title"><a href="/exam-details/@(Model.Id).html">@Model.Name</a></h5>
             <p class="card-text"><a href="teacher-detail.html">@Model.CategoryName</a></p>
             <div class="rating-wrap d-flex align-items-center py-2">
