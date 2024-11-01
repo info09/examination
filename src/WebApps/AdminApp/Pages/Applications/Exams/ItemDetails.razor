@@ -1,0 +1,27 @@
+﻿@page "/app/exams/details/{Id}"
+@using Examination.Shared.Categories
+@using Examination.Shared.Exams
+@using Examination.Shared.Questions
+@inject IExamService ExamService
+@inject ICategoryService CategoryService
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
+@inject IDialogService DialogService
+
+
+@code {
+    bool success;
+    bool loading = false;
+    [Parameter]
+    public string Id { set; get; }
+
+    CreateExamRequest model = new CreateExamRequest();
+    List<CategoryDto> categories = new List<CategoryDto>();
+    HashSet<QuestionDto> questions = new HashSet<QuestionDto>();
+
+    private async Task AddQuestions(){}
+
+    private async Task OnValidSubmit(){}
+
+    private async Task OnDelete(){}
+}

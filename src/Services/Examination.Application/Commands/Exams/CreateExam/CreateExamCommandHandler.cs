@@ -53,12 +53,18 @@ namespace Examination.Application.Commands.Exams.CreateExam
 
             var category = await _categoryRepository.GetCategoriesByIdAsync(request.CategoryId);
             var currentUserId = _httpContextAccessor.GetUserId();
+
+            if(questions.Count != request.NumberOfQuestions)
+            {
+                return new ApiErrorResult<ExamDto>(400, "Không đủ số câu hỏi");
+            }
+
             var itemToAdd = new Exam(
                 request.Name,
                 request.ShortDesc,
                 request.Content,
                 request.NumberOfQuestions,
-                request.Duration,
+                request.DurationInMinutes,
                 questions,
                 request.Level,
                 currentUserId,

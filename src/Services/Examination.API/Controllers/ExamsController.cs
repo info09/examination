@@ -52,7 +52,7 @@ namespace Examination.API.Controllers
                 AutoGenerateQuestion = request.AutoGenerateQuestion,
                 CategoryId = request.CategoryId,
                 Content = request.Content,
-                Duration = request.Duration,
+                DurationInMinutes = request.DurationInMinutes,
                 IsTimeRestricted = request.IsTimeRestricted,
                 Level = request.Level,
                 NumberOfQuestionCorrectForPass = request.NumberOfQuestionCorrectForPass,
