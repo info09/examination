@@ -72,7 +72,7 @@ namespace Examination.Application.Commands.Exams.UpdateExam
             itemToUpdate.Name = request.Name;
             itemToUpdate.ShortDesc = request.ShortDesc;
             itemToUpdate.Content = request.Content;
-            itemToUpdate.Duration = request.Duration;
+            itemToUpdate.DurationInMinutes = request.DurationInMinutes;
             itemToUpdate.Level = request.Level;
             itemToUpdate.IsTimeRestricted = request.IsTimeRestricted;
             itemToUpdate.NumberOfQuestionCorrectForPass = request.NumberOfQuestionCorrectForPass;

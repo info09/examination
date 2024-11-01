@@ -14,7 +14,7 @@ namespace Examination.Shared.Exams
 
         public int NumberOfQuestions { get; set; }
 
-        public string Duration { get; set; }
+        public int DurationInMinutes { get; set; }
 
         public List<QuestionDto> Questions { get; set; }
 

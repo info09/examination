@@ -64,7 +64,7 @@ namespace Examination.API.Controllers
             return StatusCode(result.StatusCode, result);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<IActionResult> UpdateExamAsync([FromBody] UpdateExamRequest request)
         {
             var command = new UpdateExamCommand()
@@ -74,7 +74,7 @@ namespace Examination.API.Controllers
                 AutoGenerateQuestion = request.AutoGenerateQuestion,
                 CategoryId = request.CategoryId,
                 Content = request.Content,
-                Duration = request.Duration,
+                DurationInMinutes = request.DurationInMinutes,
                 IsTimeRestricted = request.IsTimeRestricted,
                 Level = request.Level,
                 NumberOfQuestionCorrectForPass = request.NumberOfQuestionCorrectForPass,
