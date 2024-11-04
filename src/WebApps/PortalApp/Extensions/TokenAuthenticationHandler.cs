@@ -1,8 +1,8 @@
-﻿using AdminApp.Services.Interfaces;
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Net;
+using AdminApp.Services;
 
-namespace AdminApp.Services
+namespace PortalApp.Extensions
 {
     public class TokenAuthenticationHandler : DelegatingHandler
     {
@@ -22,7 +22,6 @@ namespace AdminApp.Services
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             }
             var response = await base.SendAsync(request, cancellationToken);
-
 
 
             if (response.StatusCode == HttpStatusCode.Unauthorized)

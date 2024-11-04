@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using AdminApp.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using PortalApp;
 using PortalApp.Core;
+using PortalApp.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,20 +38,34 @@ builder.Services.AddAuthentication(options =>
         // Xử lý sự kiện đăng nhập
         options.Events = new OpenIdConnectEvents
         {
-            OnTokenValidated = context =>
+            OnTokenValidated = async context =>
             {
+                var expiresIn = context.TokenEndpointResponse.ExpiresIn;
                 var accessToken = context.TokenEndpointResponse.AccessToken;
                 var refreshToken = context.TokenEndpointResponse.RefreshToken;
+                var expiresAt = DateTimeOffset.UtcNow.AddSeconds(int.Parse(context.TokenEndpointResponse.ExpiresIn));
                 // Bạn có thể xử lý thông tin người dùng tại đây sau khi đăng nhập thành công
-                return Task.CompletedTask;
+
+                context.Properties.StoreTokens(new[]
+                {
+                    new AuthenticationToken { Name = "access_token", Value = context.TokenEndpointResponse.AccessToken },
+                    new AuthenticationToken { Name = "refresh_token", Value = context.TokenEndpointResponse.RefreshToken },
+                    new AuthenticationToken { Name = "expires_at", Value = expiresAt.ToString("o") }
+                });
             }
         };
-        
+
     });
+
+builder.Services.AddScoped<TokenService>();
+
+// Đăng ký TokenAuthenticationHandler
+builder.Services.AddTransient<TokenAuthenticationHandler>();
+
 builder.Services.AddHttpClient("BackendApi", options =>
 {
     options.BaseAddress = new Uri(builder.Configuration["BackendApiUrl"]);
-});
+}).AddHttpMessageHandler<TokenAuthenticationHandler>();
 builder.Services.RegisterCustomServices();
 
 var app = builder.Build();
