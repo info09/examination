@@ -27,18 +27,11 @@ namespace AdminApp.Services
             var refreshToken = await _httpContextAccessor?.HttpContext?.GetTokenAsync("refresh_token");
             var expiresAt = await _httpContextAccessor?.HttpContext?.GetTokenAsync("expires_at");
 
-            if (DateTime.UtcNow > DateTime.Parse(expiresAt))
+            if (DateTime.UtcNow > DateTimeOffset.Parse(expiresAt))
             {
-                // Access token hết hạn, gọi refresh token
-                if (string.IsNullOrEmpty(refreshToken))
-                {
-                    return string.Empty;
-                }
-                else
-                {
-                    var res = await RefreshTokenAsync(refreshToken);
-                    return res.AccessToken;
-                }
+                var res = await RefreshTokenAsync(refreshToken);
+                return res.AccessToken;
+
             }
 
             return accessToken;

@@ -16,6 +16,7 @@ namespace Examination.Application.Commands.Exams.CreateExam
         public string ShortDesc { get; set; }
 
         public string Content { get; set; }
+        public string Duration { get; set; }
 
         [Required]
         public int NumberOfQuestions { get; set; }

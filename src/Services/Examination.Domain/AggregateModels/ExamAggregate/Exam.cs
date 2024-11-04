@@ -7,7 +7,7 @@ namespace Examination.Domain.AggregateModels.ExamAggregate
 {
     public class Exam : Entity, IAggregateRoot
     {
-        public Exam(string name, string shortDesc, string content, int numberOfQuestions, int? durationInMinutes,
+        public Exam(string name, string shortDesc, string content, int numberOfQuestions, string duration, int? durationInMinutes,
             List<Question> questions, Level level, string ownerUserId, int numberOfQuestionCorrectForPass,
             bool isTimeRestricted, string categoryId, string categoryName)
         {
@@ -21,10 +21,10 @@ namespace Examination.Domain.AggregateModels.ExamAggregate
                 throw new ArgumentNullException($"{nameof(numberOfQuestionCorrectForPass)} is invalid.");
 
 
-            (Name, ShortDesc, Content, NumberOfQuestions,
+            (Name, ShortDesc, Content, NumberOfQuestions, Duration, 
                     DurationInMinutes, Questions, Level, DateCreated, OwnerUserId, NumberOfQuestionCorrectForPass,
                     IsTimeRestricted, CategoryId, CategoryName)
-                = (name, shortDesc, content, numberOfQuestions, durationInMinutes, questions, level, DateTime.UtcNow,
+                = (name, shortDesc, content, numberOfQuestions, duration, durationInMinutes, questions, level, DateTime.UtcNow,
                     ownerUserId,
                     numberOfQuestionCorrectForPass, isTimeRestricted, categoryId, categoryName);
         }
