@@ -27,7 +27,7 @@ namespace PortalApp.Services
                     // rest of your code
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 }
-                var result = await client.GetFromJsonAsync<ApiResult<T>>(url);
+                var result = await client.GetFromJsonAsync<ApiResult<T>>(url, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
                 return result ?? throw new Exception("Failed to deserialize response"); // or some other error handling
             }
         }
@@ -52,7 +52,7 @@ namespace PortalApp.Services
 
             if (response.IsSuccessStatusCode)
             {
-                return JsonSerializer.Deserialize<ApiResult<TResponse>>(body);
+                return JsonSerializer.Deserialize<ApiResult<TResponse>>(body, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
             }
             throw new Exception(body);
         }
