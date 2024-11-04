@@ -4,41 +4,44 @@ using Blazored.SessionStorage;
 using Examination.Shared.Categories;
 using Examination.Shared.SeedWorks;
 using Microsoft.AspNetCore.WebUtilities;
+using System.Net.Http;
 using System.Net.Http.Json;
 
 namespace AdminApp.Services
 {
     public class CategoryService : ICategoryService
     {
-        public HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly ISessionStorageService _sessionStorage;
 
-        public CategoryService(HttpClient httpClient, ISessionStorageService sessionStorage)
+        public CategoryService(ISessionStorageService sessionStorage, IHttpClientFactory httpClientFactory)
         {   
-            _httpClient = httpClient;
             _sessionStorage = sessionStorage;
+            _httpClientFactory = httpClientFactory;
         }
         
         public async Task<bool> CreateAsync(CreateCategoryRequest request)
         {
+            var httpClient = _httpClientFactory.CreateClient("MyHttpClient");
             var token = await _sessionStorage.GetItemAsStringAsync(KeyConstants.AccessToken);
-            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Trim('"'));
-            var result = await _httpClient.PostAsJsonAsync("/api/Categories", request);
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Trim('"'));
+            var result = await httpClient.PostAsJsonAsync("/api/Categories", request);
             return result.IsSuccessStatusCode;
         }
 
         public async Task<bool> DeleteAsync(string id)
         {
+            var httpClient = _httpClientFactory.CreateClient("MyHttpClient");
             var token = await _sessionStorage.GetItemAsStringAsync(KeyConstants.AccessToken);
-            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Trim('"'));
-            var result = await _httpClient.DeleteAsync($"/api/Categories/{id}");
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Trim('"'));
+            var result = await httpClient.DeleteAsync($"/api/Categories/{id}");
             return result.IsSuccessStatusCode;
         }
 
         public async Task<ApiResult<PagedList<CategoryDto>>> GetCategoriesPagingAsync(CategorySearch searchInput)
         {
-            var token = await _sessionStorage.GetItemAsStringAsync(KeyConstants.AccessToken);
-            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Trim('"'));
+            var httpClient = _httpClientFactory.CreateClient("MyHttpClient");
+            
             var queryStringParam = new Dictionary<string, string>
             {
                 ["pageIndex"] = searchInput.PageNumber.ToString(),
@@ -50,30 +53,33 @@ namespace AdminApp.Services
 
             string url = QueryHelpers.AddQueryString("/api/Categories/paging", queryStringParam);
 
-            var result = await _httpClient.GetFromJsonAsync<ApiResult<PagedList<CategoryDto>>>(url);
+            var result = await httpClient.GetFromJsonAsync<ApiResult<PagedList<CategoryDto>>>(url);
 
             return result;
         }
 
         public async Task<ApiResult<CategoryDto>> GetCategoryByIdAsync(string id)
         {
-            var token = await _sessionStorage.GetItemAsStringAsync(KeyConstants.AccessToken);
-            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Trim('"'));
-            var result = await _httpClient.GetFromJsonAsync<ApiResult<CategoryDto>>($"/api/Categories/{id}");
-            return result!;
+            var httpClient = _httpClientFactory.CreateClient("MyHttpClient");
+
+
+            // Thực hiện yêu cầu GET
+            var result = await httpClient.GetFromJsonAsync<ApiResult<CategoryDto>>($"/api/Categories/{id}");
+
+            return result;
         }
 
         public async Task<bool> UpdateAsync(UpdateCategoryRequest request)
         {
-            var token = await _sessionStorage.GetItemAsStringAsync(KeyConstants.AccessToken);
-            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Trim('"'));
-            var result = await _httpClient.PutAsJsonAsync($"/api/Categories", request);
+            var httpClient = _httpClientFactory.CreateClient("MyHttpClient");
+            var result = await httpClient.PutAsJsonAsync($"/api/Categories", request);
             return result.IsSuccessStatusCode;
         }
 
         public async Task<ApiResult<List<CategoryDto>>> GetAllCategories()
         {
-            var result = await _httpClient.GetFromJsonAsync<ApiResult<List<CategoryDto>>>("/api/Categories");
+            var httpClient = _httpClientFactory.CreateClient("MyHttpClient");
+            var result = await httpClient.GetFromJsonAsync<ApiResult<List<CategoryDto>>>("/api/Categories");
             return result;
         }
     }

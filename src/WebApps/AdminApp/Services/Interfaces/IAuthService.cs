@@ -7,6 +7,5 @@ namespace AdminApp.Services.Interfaces
     {
         Task<TokenResponse> LoginAsync(LoginRequest loginRequest);
         Task LogoutAsync();
-        Task<TokenResponse> RefreshAccessTokenAsync(LoginRequest loginRequest);
     }
 }

@@ -4,6 +4,7 @@
     {
         public const string AccessToken = "AccessToken";
         public const string RefreshToken = "RefreshToken";
+        public const string ExpiresAt = "ExpiresAt";
     }
     public class UrlConstants
     {

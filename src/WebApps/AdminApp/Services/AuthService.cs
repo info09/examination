@@ -35,10 +35,7 @@ namespace AdminApp.Services
         public async Task<TokenResponse> LoginAsync(LoginRequest loginRequest)
         {
             var token = new TokenResponse();
-            if (DateTime.UtcNow >= _accessTokenExpiration)
-            {
-                token = await RefreshAccessTokenAsync(loginRequest);
-            }
+            token = await AccessTokenAsync(loginRequest);
             return token;
         }
 
@@ -61,11 +58,12 @@ namespace AdminApp.Services
         {
             await _sessionStorage.RemoveItemAsync(KeyConstants.AccessToken);
             await _sessionStorage.RemoveItemAsync(KeyConstants.RefreshToken);
+            await _sessionStorage.RemoveItemAsync(KeyConstants.ExpiresAt);
             ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsLoggedOut();
             _httpClient.DefaultRequestHeaders.Authorization = null;
         }
 
-        public async Task<TokenResponse> RefreshAccessTokenAsync(LoginRequest loginRequest)
+        private async Task<TokenResponse> AccessTokenAsync(LoginRequest loginRequest)
         {
             _disco = await HttpClientDiscoveryExtensions.GetDiscoveryDocumentAsync(
                _httpClient,
@@ -79,6 +77,7 @@ namespace AdminApp.Services
             {
                 await _sessionStorage.SetItemAsync(KeyConstants.AccessToken, token.AccessToken);
                 await _sessionStorage.SetItemAsync(KeyConstants.RefreshToken, token.RefreshToken);
+                await _sessionStorage.SetItemAsync(KeyConstants.ExpiresAt, DateTime.UtcNow.AddSeconds(token.ExpiresIn));
                 _accessTokenExpiration = DateTime.UtcNow.AddSeconds(token.ExpiresIn);
                 ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(loginRequest.UserName);
             }

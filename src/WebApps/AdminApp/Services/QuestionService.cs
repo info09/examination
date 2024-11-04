@@ -8,32 +8,36 @@ namespace AdminApp.Services
 {
     public class QuestionService : IQuestionService
     {
-        private HttpClient _httpClient;
-        public QuestionService(HttpClient httpClient)
+        private readonly IHttpClientFactory _httpClientFactory;
+        public QuestionService(IHttpClientFactory httpClientFactory)
         {
-            _httpClient = httpClient;
+            _httpClientFactory = httpClientFactory;
         }
 
         public async Task<bool> CreateAsync(CreateQuestionRequest request)
         {
-            var result = await _httpClient.PostAsJsonAsync("/api/Questions", request);
+            var httpClient = _httpClientFactory.CreateClient("MyHttpClient");
+            var result = await httpClient.PostAsJsonAsync("/api/Questions", request);
             return result.IsSuccessStatusCode;
         }
 
         public async Task<bool> DeleteAsync(string id)
         {
-            var result = await _httpClient.DeleteAsync($"/api/Questions/{id}");
+            var httpClient = _httpClientFactory.CreateClient("MyHttpClient");
+            var result = await httpClient.DeleteAsync($"/api/Questions/{id}");
             return result.IsSuccessStatusCode;
         }
 
         public async Task<ApiResult<QuestionDto>> GetQuestionById(string id)
         {
-            var result = await _httpClient.GetFromJsonAsync<ApiResult<QuestionDto>>($"/api/Questions/{id}");
+            var httpClient = _httpClientFactory.CreateClient("MyHttpClient");
+            var result = await httpClient.GetFromJsonAsync<ApiResult<QuestionDto>>($"/api/Questions/{id}");
             return result;
         }
 
         public async Task<ApiResult<PagedList<QuestionDto>>> GetQuestionsPagingAsync(QuestionSearch questionSearch)
         {
+            var httpClient = _httpClientFactory.CreateClient("MyHttpClient");
             var queryStringParam = new Dictionary<string, string>
             {
                 ["pageIndex"] = questionSearch.PageNumber.ToString(),
@@ -46,13 +50,14 @@ namespace AdminApp.Services
 
             string url = QueryHelpers.AddQueryString("/api/Questions/paging", queryStringParam);
 
-            var result = await _httpClient.GetFromJsonAsync<ApiResult<PagedList<QuestionDto>>>(url);
+            var result = await httpClient.GetFromJsonAsync<ApiResult<PagedList<QuestionDto>>>(url);
             return result;
         }
 
         public async Task<bool> UpdateAsync(UpdateQuestionRequest request)
         {
-            var result = await _httpClient.PutAsJsonAsync("/api/Questions", request);
+            var httpClient = _httpClientFactory.CreateClient("MyHttpClient");
+            var result = await httpClient.PutAsJsonAsync("/api/Questions", request);
             return result.IsSuccessStatusCode;
         }
     }
