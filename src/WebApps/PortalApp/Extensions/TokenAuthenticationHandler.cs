@@ -1,16 +1,19 @@
 ﻿using System.Net.Http.Headers;
 using System.Net;
 using AdminApp.Services;
+using Microsoft.AspNetCore.Components;
 
 namespace PortalApp.Extensions
 {
     public class TokenAuthenticationHandler : DelegatingHandler
     {
         private readonly TokenService _tokenService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public TokenAuthenticationHandler(TokenService tokenService)
+        public TokenAuthenticationHandler(TokenService tokenService, IHttpContextAccessor httpContextAccessor)
         {
             _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
+            _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -32,6 +35,10 @@ namespace PortalApp.Extensions
                 {
                     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
                     response = await base.SendAsync(request, cancellationToken);
+                }
+                else
+                {
+                    _httpContextAccessor.HttpContext.Response.Redirect("/login.html");
                 }
             }
 

@@ -60,7 +60,7 @@ namespace PortalApp.Services
         public async Task<ApiResult<bool>> PutAsync<TRequest, TResponse>(string url, TRequest requestContent, bool isSecuredServie = true)
         {
             var client = _httpClientFactory.CreateClient("BackendApi");
-            HttpContent httpContent = null;
+            StringContent httpContent = null;
             if (requestContent != null)
             {
                 var json = JsonSerializer.Serialize(requestContent);
@@ -72,7 +72,7 @@ namespace PortalApp.Services
                 var token = await _httpContextAccessor.HttpContext.GetTokenAsync("access_token");
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             }
-            var response = await client.PutAsJsonAsync(url, httpContent);
+            var response = await client.PutAsync(url, httpContent);
             var body = await response.Content.ReadAsStringAsync();
 
             return JsonSerializer.Deserialize<ApiResult<bool>>(body, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });

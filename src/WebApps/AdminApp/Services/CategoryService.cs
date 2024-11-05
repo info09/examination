@@ -23,8 +23,6 @@ namespace AdminApp.Services
         public async Task<bool> CreateAsync(CreateCategoryRequest request)
         {
             var httpClient = _httpClientFactory.CreateClient("MyHttpClient");
-            var token = await _sessionStorage.GetItemAsStringAsync(KeyConstants.AccessToken);
-            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Trim('"'));
             var result = await httpClient.PostAsJsonAsync("/api/Categories", request);
             return result.IsSuccessStatusCode;
         }
@@ -32,8 +30,6 @@ namespace AdminApp.Services
         public async Task<bool> DeleteAsync(string id)
         {
             var httpClient = _httpClientFactory.CreateClient("MyHttpClient");
-            var token = await _sessionStorage.GetItemAsStringAsync(KeyConstants.AccessToken);
-            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Trim('"'));
             var result = await httpClient.DeleteAsync($"/api/Categories/{id}");
             return result.IsSuccessStatusCode;
         }
