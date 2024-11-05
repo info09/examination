@@ -20,5 +20,11 @@ namespace PortalApp.Extensions
 
             return firstName + " " + lastName;
         }
+
+        public static string GetEmail(this ClaimsPrincipal claimsPrincipal)
+        {
+            var email = claimsPrincipal.FindFirst(ClaimTypes.Email)?.Value;
+            return email;
+        }
     }
 }
